@@ -50,7 +50,7 @@ class Room {
         this.bookings.push(booking);
     }
 
-    static totalOccupancyPercentage(rooms = [], startDate, endDate) {
+    static totalOccupancyPercentage(rooms, startDate, endDate) {
         if (!Array.isArray(rooms)) {
             throw new Error("Rooms data is required");
         }
@@ -63,7 +63,18 @@ class Room {
     }
 
     static availableRooms(rooms, startDate, endDate) {
-        return [];
+        if (!Array.isArray(rooms)) {
+            throw new Error("Rooms data is required");
+        }
+
+        let availableRooms = [];
+        rooms.forEach(room => {
+            if (room.occupancyPercentage(startDate, endDate) === 0) {
+                availableRooms.push(room);
+            }
+        });
+        
+        return availableRooms.length > 0 ? availableRooms : "No rooms available";
     }
 }
 
