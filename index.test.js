@@ -576,3 +576,86 @@ describe("availableRooms method", () => {
     expect(() => Room.availableRooms(rooms, "2025, 03, 20")).toThrow("Start and end date are required");
   });
 });
+
+describe("Booking properties", () => {
+  test("booking should have a name", () => {
+    const booking = new Booking({
+      name: "John Doe",
+      email: "john.doe@example.com",
+      checkin: "2022, 01, 01",
+      checkout: "2022, 01, 04",
+      discount: 10,
+      room: "101"
+    });
+    expect(booking).toHaveProperty("name");
+  })
+});
+
+describe("fee method", () => {
+  test("returns the correct fee when discount is 0", () => {
+    const booking = new Booking({
+      name: "John Doe",
+      email: "john.doe@example.com",
+      checkin: "2022, 01, 01",
+      checkout: "2022, 01, 04",
+      discount: 0,
+      room: { name: "Deluxe Room", rate: 200, discount: 0, bookings: [{ name: "John Doe", email: "john.doe@example.com", checkin: "2022, 01, 01", checkout: "2022, 01, 04", discount: 0, room: "deluxe room" }]}
+    });
+    expect(booking.fee).toBe(600);
+  });
+  test("returns the correct fee when there is room discount, but no booking discount", () => {
+    const booking = new Booking({
+      name: "John Doe",
+      email: "john.doe@example.com",
+      checkin: "2022, 01, 01",
+      checkout: "2022, 01, 04",
+      discount: 0,
+      room: { name: "Deluxe Room", rate: 200, discount: 10, bookings: [{ name: "John Doe", email: "john.doe@example.com", checkin: "2022, 01, 01", checkout: "2022, 01, 04", discount: 0, room: "deluxe room" }]}
+    });
+    expect(booking.fee).toBe(540);
+  });
+  test("returns the correct fee when there is booking discount, but no room discount", () => {
+    const booking = new Booking({
+      name: "John Doe",
+      email: "john.doe@example.com",
+      checkin: "2022, 01, 01",
+      checkout: "2022, 01, 04",
+      discount: 20,
+      room: { name: "Deluxe Room", rate: 200, discount: 0, bookings: [{ name: "John Doe", email: "john.doe@example.com", checkin: "2022, 01, 01", checkout: "2022, 01, 04", discount: 20, room: "deluxe room" }]}
+    });
+    expect(booking.fee).toBe(480);
+  });
+  test("returns the correct fee when there is booking discount, and room discount", () => {
+    const booking = new Booking({
+      name: "John Doe",
+      email: "john.doe@example.com",
+      checkin: "2022, 01, 01",
+      checkout: "2022, 01, 04",
+      discount: 20,
+      room: { name: "Deluxe Room", rate: 200, discount: 10, bookings: [{ name: "John Doe", email: "john.doe@example.com", checkin: "2022, 01, 01", checkout: "2022, 01, 04", discount: 20, room: "deluxe room" }]}
+    });
+    expect(booking.fee).toBe(432);
+  });
+  test("returns 0 when there is a full discount", () => {
+    const booking = new Booking({
+      name: "John Doe",
+      email: "john.doe@example.com",
+      checkin: "2022, 01, 01",
+      checkout: "2022, 01, 04",
+      discount: 20,
+      room: { name: "Deluxe Room", rate: 200, discount: 100, bookings: [{ name: "John Doe", email: "john.doe@example.com", checkin: "2022, 01, 01", checkout: "2022, 01, 04", discount: 20, room: "deluxe room" }]}
+    });
+    expect(booking.fee).toBe(0);
+  });
+  test("returns 0 when there is discount bigger than 100%", () => {
+    const booking = new Booking({
+      name: "John Doe",
+      email: "john.doe@example.com",
+      checkin: "2022, 01, 01",
+      checkout: "2022, 01, 04",
+      discount: 20,
+      room: { name: "Deluxe Room", rate: 200, discount: 150, bookings: [{ name: "John Doe", email: "john.doe@example.com", checkin: "2022, 01, 01", checkout: "2022, 01, 04", discount: 170, room: "deluxe room" }]}
+    });
+    expect(booking.fee).toBe(0);
+  });
+})
