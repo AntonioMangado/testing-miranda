@@ -50,8 +50,16 @@ class Room {
         this.bookings.push(booking);
     }
 
-    static totalOccupancyPercentage(rooms, startDate, endDate) {
-        return 0;
+    static totalOccupancyPercentage(rooms = [], startDate, endDate) {
+        if (!Array.isArray(rooms)) {
+            throw new Error("Rooms data is required");
+        }
+        
+        let percentageAcc = 0
+        rooms.forEach(room => {
+            percentageAcc += room.occupancyPercentage(startDate, endDate);
+        });
+        return Math.trunc(percentageAcc/rooms.length);
     }
 
     static availableRooms(rooms, startDate, endDate) {
@@ -70,37 +78,37 @@ class Booking {
         this.room = room;
     }
 
-    getfee() {
+    getFee() {
         return 0;
     }
 }
 
-const room1 = new Room({
-    name: 'Test Room', 
-    bookings: [
-        {
-            name: 'John Doe',
-            email: 'john.doe@example.com',
-            checkin: "2025, 03, 15",
-            checkout: "2025, 03, 18",
-            discount: 10,
-            room: '101'
-        },
-        {
-            name: 'Jane Doe',
-            email: 'jane.doe@example.com',
-            checkin: "2025, 03, 20",
-            checkout: "2025, 03, 25",
-            discount: 10,
-            room: '101'
-        }
-    ], 
-    rate: 100, 
-    discount: 0
-});
+// const room1 = new Room({
+//     name: 'Test Room', 
+//     bookings: [
+//         {
+//             name: 'John Doe',
+//             email: 'john.doe@example.com',
+//             checkin: "2025, 03, 15",
+//             checkout: "2025, 03, 18",
+//             discount: 10,
+//             room: '101'
+//         },
+//         {
+//             name: 'Jane Doe',
+//             email: 'jane.doe@example.com',
+//             checkin: "2025, 03, 20",
+//             checkout: "2025, 03, 25",
+//             discount: 10,
+//             room: '101'
+//         }
+//     ], 
+//     rate: 100, 
+//     discount: 0
+// });
 
-const result = room1.occupancyPercentage("2025, 03, 20", "2025, 04, 23");
-console.log(result)
+// const result = room1.occupancyPercentage("2025, 03, 20", "2025, 04, 23");
+// console.log(result)
 
 
 // const result = room.isOccupied(1742136793);
