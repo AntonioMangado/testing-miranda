@@ -1,4 +1,4 @@
-const { Room, Booking } = require('./index');
+import { Room, Booking } from './index';
 
 describe("Room properties", () => {
   test("room should have a name", () => {
@@ -303,7 +303,7 @@ describe("isOccupied method", () => {
           rate: 100, 
           discount: 0
       });
-      expect(() => room.isOccupied()).toThrow("Date is required");
+      expect(() => room.isOccupied(undefined)).toThrow("Date is required");
   });
 })
 
@@ -463,7 +463,7 @@ describe("occupancyPercentage method", () => {
           rate: 100, 
           discount: 0
       });
-      expect(() => room.occupancyPercentage("2025, 03, 23")).toThrow("Start and end date are required");
+      expect(() => room.occupancyPercentage("2025, 03, 23", undefined)).toThrow("Start and end date are required");
   });
   test(("throws error when invalid arguments"), () => {
       const room = new Room({
@@ -520,24 +520,24 @@ describe("totalOccupancyPercentage method", () => {
     const room1 = new Room({name: 'Test Room', bookings: [{ name: 'John Doe', email: 'john.doe@example.com', checkin: "2025, 03, 15", checkout: "2025, 03, 21", discount: 10, room: '101'},{ name: 'Jane Doe', email: 'jane.doe@example.com', checkin: "2025, 03, 22", checkout: "2025, 03, 25", discount: 10, room: '101'}], rate: 100, discount: 0 });
     const room2 = new Room({name: 'Test Room', bookings: [{ name: 'John Doe', email: 'john.doe@example.com', checkin: "2025, 03, 15", checkout: "2025, 03, 17", discount: 10, room: '102'},{ name: 'Jane Doe', email: 'jane.doe@example.com', checkin: "2025, 03, 23", checkout: "2025, 03, 25", discount: 10, room: '102'}], rate: 100, discount: 0 });
     const rooms = [room1, room2];
-    expect(() => Room.totalOccupancyPercentage("2025, 03, 19", "2025, 03, 20")).toThrow("Rooms data is required");
+    expect(() => Room.totalOccupancyPercentage(undefined, "2025, 03, 19", "2025, 03, 20")).toThrow("Rooms data is required");
   });
   test("throws Error when date arguments are missing", () => {
     const room1 = new Room({name: 'Test Room', bookings: [{ name: 'John Doe', email: 'john.doe@example.com', checkin: "2025, 03, 15", checkout: "2025, 03, 21", discount: 10, room: '101'},{ name: 'Jane Doe', email: 'jane.doe@example.com', checkin: "2025, 03, 22", checkout: "2025, 03, 25", discount: 10, room: '101'}], rate: 100, discount: 0 });
     const room2 = new Room({name: 'Test Room', bookings: [{ name: 'John Doe', email: 'john.doe@example.com', checkin: "2025, 03, 15", checkout: "2025, 03, 17", discount: 10, room: '102'},{ name: 'Jane Doe', email: 'jane.doe@example.com', checkin: "2025, 03, 23", checkout: "2025, 03, 25", discount: 10, room: '102'}], rate: 100, discount: 0 });
     const rooms = [room1, room2];
-    expect(() => Room.totalOccupancyPercentage(rooms, "2025, 03, 20")).toThrow("Start and end date are required");
+    expect(() => Room.totalOccupancyPercentage(rooms, "2025, 03, 20", undefined)).toThrow("Start and end date are required");
   });
 })
 
 describe("availableRooms method", () => {
-  test("returns 'No rooms available' when no rooms are available", () => {
+  test("returns an empty array when no rooms are available", () => {
     const room1 = new Room({name: 'Test Room', bookings: [{ name: 'John Doe', email: 'john.doe@example.com', checkin: "2025, 03, 15", checkout: "2025, 03, 21", discount: 10, room: '101'},{ name: 'Jane Doe', email: 'jane.doe@example.com', checkin: "2025, 03, 22", checkout: "2025, 03, 25", discount: 10, room: '101'}], rate: 100, discount: 0 });
     const room2 = new Room({name: 'Test Room', bookings: [{ name: 'John Doe', email: 'john.doe@example.com', checkin: "2025, 03, 15", checkout: "2025, 03, 23", discount: 10, room: '102'},{ name: 'Jane Doe', email: 'jane.doe@example.com', checkin: "2025, 03, 24", checkout: "2025, 03, 25", discount: 10, room: '102'}], rate: 100, discount: 0 });
     const room3 = new Room({name: 'Test Room', bookings: [{ name: 'John Doe', email: 'john.doe@example.com', checkin: "2025, 03, 19", checkout: "2025, 03, 30", discount: 10, room: '103'}], rate: 100, discount: 0 });
     const room4 = new Room({name: 'Test Room', bookings: [{ name: 'Jane Doe', email: 'jane.doe@example.com', checkin: "2025, 03, 19", checkout: "2025, 04, 02", discount: 10, room: '104'}], rate: 100, discount: 0 });
     const rooms = [room1, room2, room3, room4];
-    expect(Room.availableRooms(rooms, "2025, 03, 19", "2025, 03, 20")).toBe("No rooms available");
+    expect(Room.availableRooms(rooms, "2025, 03, 19", "2025, 03, 20")).toHaveLength(0);
   });
   test("returns an array with available rooms", () => {
     const room1 = new Room({name: 'Test Room', bookings: [{ name: 'John Doe', email: 'john.doe@example.com', checkin: "2025, 03, 15", checkout: "2025, 03, 21", discount: 10, room: '101'},{ name: 'Jane Doe', email: 'jane.doe@example.com', checkin: "2025, 03, 22", checkout: "2025, 03, 25", discount: 10, room: '101'}], rate: 100, discount: 0 });
@@ -545,7 +545,7 @@ describe("availableRooms method", () => {
     const room3 = new Room({name: 'Test Room', bookings: [{ name: 'John Doe', email: 'john.doe@example.com', checkin: "2025, 03, 19", checkout: "2025, 03, 30", discount: 10, room: '103'}], rate: 100, discount: 0 });
     const room4 = new Room({name: 'Test Room', bookings: [{ name: 'Jane Doe', email: 'jane.doe@example.com', checkin: "2025, 03, 19", checkout: "2025, 04, 02", discount: 10, room: '104'}], rate: 100, discount: 0 });
     const rooms = [room1, room2, room3, room4];
-    expect(Room.availableRooms(rooms, "2025, 03, 19", "2025, 03, 20")).not.toHaveLength(0);
+    expect(Room.availableRooms(rooms, "2026, 03, 19", "2026, 03, 20")).not.toHaveLength(0);
   });
   test("returns an array with the correct number of available rooms when all rooms available", () => {
     const room1 = new Room({name: 'Test Room', bookings: [{ name: 'John Doe', email: 'john.doe@example.com', checkin: "2025, 03, 15", checkout: "2025, 03, 21", discount: 10, room: '101'},{ name: 'Jane Doe', email: 'jane.doe@example.com', checkin: "2025, 03, 22", checkout: "2025, 03, 25", discount: 10, room: '101'}], rate: 100, discount: 0 });
@@ -567,13 +567,13 @@ describe("availableRooms method", () => {
     const room1 = new Room({name: 'Test Room', bookings: [{ name: 'John Doe', email: 'john.doe@example.com', checkin: "2025, 03, 15", checkout: "2025, 03, 21", discount: 10, room: '101'},{ name: 'Jane Doe', email: 'jane.doe@example.com', checkin: "2025, 03, 22", checkout: "2025, 03, 25", discount: 10, room: '101'}], rate: 100, discount: 0 });
     const room2 = new Room({name: 'Test Room', bookings: [{ name: 'John Doe', email: 'john.doe@example.com', checkin: "2025, 03, 15", checkout: "2025, 03, 17", discount: 10, room: '102'},{ name: 'Jane Doe', email: 'jane.doe@example.com', checkin: "2025, 03, 23", checkout: "2025, 03, 25", discount: 10, room: '102'}], rate: 100, discount: 0 });
     const rooms = [room1, room2];
-    expect(() => Room.availableRooms("2025, 03, 19", "2025, 03, 20")).toThrow("Rooms data is required");
+    expect(() => Room.availableRooms(undefined, "2025, 03, 19", "2025, 03, 20")).toThrow("Rooms data is required");
   });
   test("throws Error when date arguments are missing", () => {
     const room1 = new Room({name: 'Test Room', bookings: [{ name: 'John Doe', email: 'john.doe@example.com', checkin: "2025, 03, 15", checkout: "2025, 03, 21", discount: 10, room: '101'},{ name: 'Jane Doe', email: 'jane.doe@example.com', checkin: "2025, 03, 22", checkout: "2025, 03, 25", discount: 10, room: '101'}], rate: 100, discount: 0 });
     const room2 = new Room({name: 'Test Room', bookings: [{ name: 'John Doe', email: 'john.doe@example.com', checkin: "2025, 03, 15", checkout: "2025, 03, 17", discount: 10, room: '102'},{ name: 'Jane Doe', email: 'jane.doe@example.com', checkin: "2025, 03, 23", checkout: "2025, 03, 25", discount: 10, room: '102'}], rate: 100, discount: 0 });
     const rooms = [room1, room2];
-    expect(() => Room.availableRooms(rooms, "2025, 03, 20")).toThrow("Start and end date are required");
+    expect(() => Room.availableRooms(rooms, "2025, 03, 20", undefined)).toThrow("Start and end date are required");
   });
 });
 
